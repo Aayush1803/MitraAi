@@ -3,7 +3,7 @@ import { JWT } from 'next-auth/jwt';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { userStore } from './userStore';
+import prisma from './prisma';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -27,21 +27,24 @@ export const authOptions: NextAuthOptions = {
 
         if (mode === 'signup') {
           // ── Sign Up ──────────────────────────────────────────────────────────
-          if (userStore.findByEmail(email)) {
+          const existingUser = await prisma.user.findUnique({ where: { email } });
+          if (existingUser) {
             throw new Error('An account with this email already exists.');
           }
           const hash = await bcrypt.hash(password, 12);
-          const user = userStore.create({
-            name: name || email.split('@')[0],
-            email,
-            passwordHash: hash,
-            image: null,
+          const user = await prisma.user.create({
+            data: {
+              name: name || email.split('@')[0],
+              email,
+              passwordHash: hash,
+            }
           });
           return { id: user.id, name: user.name, email: user.email, image: null };
         } else {
           // ── Login ─────────────────────────────────────────────────────────────
-          const user = userStore.findByEmail(email);
+          const user = await prisma.user.findUnique({ where: { email } });
           if (!user) throw new Error('No account found with this email.');
+          if (!user.passwordHash) throw new Error('Incorrect login method. Try Google OAuth.');
           const valid = await bcrypt.compare(password, user.passwordHash);
           if (!valid) throw new Error('Incorrect password.');
           return { id: user.id, name: user.name, email: user.email, image: user.image };
@@ -63,10 +66,26 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.image = user.image ?? null;
       }
-      // Persist Google avatar
-      if (account?.provider === 'google' && profile?.picture) {
-        token.image = profile.picture;
+
+      // Persist Google User on first sign in
+      if (account?.provider === 'google' && profile?.email) {
+        const name = profile.name || profile.email.split('@')[0];
+        const image = profile.picture || null;
+        
+        const dbUser = await prisma.user.upsert({
+          where: { email: profile.email },
+          update: { name, image },
+          create: {
+            email: profile.email,
+            name,
+            image,
+          },
+        });
+        
+        token.id = dbUser.id;
+        token.image = dbUser.image;
       }
+      
       return token;
     },
 

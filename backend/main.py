@@ -18,7 +18,7 @@ def root():
         "service": "Mitra AI Backend",
         "version": "1.0.0",
         "status":  "running",
-        "model":   "gemini-1.5-flash",
+        "model":   "gemini-2.5-flash",
     })
 
 
@@ -52,4 +52,6 @@ def analyze():
 
 # ─── Run ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False)
