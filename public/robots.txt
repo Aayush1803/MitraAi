@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /how-it-works
+Allow: /about
+Allow: /technology
+
+# Disallow auth-gated pages from indexing
+Disallow: /analyze
+Disallow: /profile
+
+Sitemap: https://mitra-ai.vercel.app/sitemap.xml
