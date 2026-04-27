@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Shield, ArrowLeft, Github, Instagram, Linkedin, Heart, Globe, Users, Target, Award } from 'lucide-react';
 import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 
 const TEAM = [
   {
@@ -268,6 +269,7 @@ export default function AboutPage() {
           </div>
         </motion.div>
       </section>
+      <Footer />
     </main>
   );
 }

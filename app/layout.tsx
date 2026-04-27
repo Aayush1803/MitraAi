@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import AuthProvider from '@/components/AuthProvider';
 import ThemeProvider from '@/components/ThemeProvider';
+import { ToastProvider } from '@/components/Toast';
+import ScrollToTop from '@/components/ScrollToTop';
 
 // ─── Phase 1: @nextjs-best-practices + @seo-audit ────────────────────────────
 // Full metadata object with: title template, description, OG, Twitter card,
@@ -79,7 +81,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="mesh-bg min-h-screen antialiased">
         <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <ToastProvider>
+              {children}
+              <ScrollToTop />
+            </ToastProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

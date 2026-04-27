@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Zap, Shield, Cpu, Database, Lock, Globe } from 'lucide-react';
 import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 
 const TECH_PILLARS = [
   {
@@ -317,6 +318,7 @@ export default function TechnologyPage() {
           </div>
         </motion.div>
       </section>
+      <Footer />
     </main>
   );
 }

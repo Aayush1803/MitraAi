@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
+import { usePathname } from 'next/navigation';
 
 const NAV_LINKS = [
   { label: 'How It Works', href: '/how-it-works' },
@@ -17,6 +18,7 @@ const NAV_LINKS = [
 export default function NavBar() {
   const { data: session, status } = useSession();
   const { theme, toggle } = useTheme();
+  const pathname = usePathname();
   const [menuOpen,   setMenuOpen]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuRef   = useRef<HTMLDivElement>(null);
@@ -77,32 +79,39 @@ export default function NavBar() {
           </span>
           <span className="hidden sm:inline-block text-[9px] font-mono border rounded px-1.5 py-0.5"
             style={{ color: 'var(--text-muted)', borderColor: 'var(--bg-border)' }}>
-            v2
+            v3
           </span>
         </Link>
 
         {/* ── Center Nav (desktop) ──────────────────────────────── */}
         <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(link => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="relative px-3 py-1.5 text-sm font-medium rounded-xl transition-all duration-200 group"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              <motion.span
-                whileHover={{ color: 'var(--text-primary)' }}
-                className="relative z-10"
-                style={{ color: 'var(--text-secondary)' }}
+          {NAV_LINKS.map(link => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="relative px-3 py-1.5 text-sm font-medium rounded-xl transition-all duration-200 group"
+                style={{ color: isActive ? '#4F8EFF' : 'var(--text-secondary)' }}
               >
-                {link.label}
-              </motion.span>
-              <motion.div
-                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ background: 'var(--bg-hover)' }}
-              />
-            </Link>
-          ))}
+                <span className="relative z-10">{link.label}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-xl"
+                    style={{ background: 'rgba(79,142,255,0.08)', border: '1px solid rgba(79,142,255,0.15)' }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                {!isActive && (
+                  <motion.div
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ background: 'var(--bg-hover)' }}
+                  />
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         {/* ── Right Side ───────────────────────────────────────── */}

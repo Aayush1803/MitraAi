@@ -7,6 +7,7 @@ import {
   Search, Brain, BarChart3, MessageSquare, Share2, CheckCircle2,
 } from 'lucide-react';
 import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 
 const STEPS = [
   {
@@ -322,6 +323,7 @@ export default function HowItWorksPage() {
           </div>
         </motion.div>
       </section>
+      <Footer />
     </main>
   );
 }
