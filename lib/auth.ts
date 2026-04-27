@@ -57,7 +57,6 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: '/',
-    error: '/',
   },
 
   callbacks: {
@@ -71,21 +70,23 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === 'google' && profile?.email) {
         const name = profile.name || profile.email.split('@')[0];
         const image = profile.picture || null;
-        
-        const dbUser = await prisma.user.upsert({
-          where: { email: profile.email },
-          update: { name, image },
-          create: {
-            email: profile.email,
-            name,
-            image,
-          },
-        });
-        
-        token.id = dbUser.id;
-        token.image = dbUser.image;
+
+        try {
+          const dbUser = await prisma.user.upsert({
+            where: { email: profile.email },
+            update: { name, image },
+            create: { email: profile.email, name, image },
+          });
+          token.id = dbUser.id;
+          token.image = dbUser.image;
+        } catch (err) {
+          // DB unavailable — still allow login via JWT, persist profile data in token
+          console.error('[Auth] DB upsert failed, using profile fallback:', err);
+          token.id = profile.email; // use email as fallback ID
+          token.image = image;
+        }
       }
-      
+
       return token;
     },
 
