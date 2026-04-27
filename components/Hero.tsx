@@ -299,7 +299,64 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
             </div>
           ))}
         </div>
+
+        {/* 23 Languages Showcase */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="mt-8 w-full max-w-3xl relative z-10"
+        >
+          <div className="glass rounded-2xl border border-white/[0.06] p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="section-label">
+                🌐 23 Supported Languages
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { en: 'Hindi',       native: 'हिन्दी' },
+                { en: 'English',     native: 'English' },
+                { en: 'Bengali',     native: 'বাংলা' },
+                { en: 'Telugu',      native: 'తెలుగు' },
+                { en: 'Marathi',     native: 'मराठी' },
+                { en: 'Tamil',       native: 'தமிழ்' },
+                { en: 'Urdu',        native: 'اردو' },
+                { en: 'Gujarati',    native: 'ગુજરાતી' },
+                { en: 'Kannada',     native: 'ಕನ್ನಡ' },
+                { en: 'Malayalam',   native: 'മലയാളം' },
+                { en: 'Odia',        native: 'ଓଡ଼ିଆ' },
+                { en: 'Punjabi',     native: 'ਪੰਜਾਬੀ' },
+                { en: 'Assamese',    native: 'অসমীয়া' },
+                { en: 'Maithili',    native: 'मैथिली' },
+                { en: 'Sanskrit',    native: 'संस्कृतम्' },
+                { en: 'Kashmiri',    native: 'کٲشُر' },
+                { en: 'Nepali',      native: 'नेपाली' },
+                { en: 'Sindhi',      native: 'سنڌي' },
+                { en: 'Konkani',     native: 'कोंकणी' },
+                { en: 'Dogri',       native: 'डोगरी' },
+                { en: 'Manipuri',    native: 'মৈতৈলোন্' },
+                { en: 'Bodo',        native: 'बड़ो' },
+                { en: 'Santali',     native: 'ᱥᱟᱱᱛᱟᱲᱤ' },
+              ].map((lang, i) => (
+                <motion.div
+                  key={lang.en}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.65 + i * 0.03, duration: 0.3 }}
+                  className="frosted-badge flex items-center gap-1.5 cursor-default"
+                  title={lang.en}
+                >
+                  <span className="text-[#4F8EFF] text-[10px] font-mono">{lang.native}</span>
+                  <span className="text-[9px] opacity-50">·</span>
+                  <span className="text-[10px]">{lang.en}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
+
 
       {/* Stats row */}
       <motion.div

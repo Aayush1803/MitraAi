@@ -22,10 +22,10 @@ const TECH_PILLARS = [
     icon: <Globe className="w-7 h-7" />,
     title: 'Multilingual NLP',
     color: '#22D3EE',
-    desc: 'Indian fact-checking requires deep linguistic intelligence. Our models are fine-tuned on Indic language corpora covering English, Hindi, Tamil, and their code-mixed variants (Hinglish, Tanglish).',
+    desc: 'Indian fact-checking requires deep linguistic intelligence. Our models support all 23 official Indian languages — from Hindi, Bengali, Telugu, Marathi, Tamil, Urdu, and Gujarati to Maithili, Dogri, Manipuri, Bodo, Santali, and more — including code-mixed variants.',
     details: [
-      'Fine-tuned on 50M+ Indian-language tokens',
-      'Handles Devanagari, Latin, and Tamil script',
+      'All 23 scheduled Indian languages (8th Schedule)',
+      'Handles Devanagari, Latin, Tamil, and regional scripts',
       'Sentiment-aware misinformation detection',
       'Regional slang and cultural idiom handling',
     ],
