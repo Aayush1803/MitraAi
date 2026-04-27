@@ -7,19 +7,9 @@ import NavBar from '@/components/NavBar';
 
 const TEAM = [
   {
-    name: 'Ayushmaan Srivastava',
-    role: 'CEO & Backend Engineer',
-    bio: "Leading the vision and backend architecture of Mitra AI.",
-    avatar: 'AS',
-    color: '#22D3EE',
-    github: 'https://github.com/Ayushmaan124-cpu',
-    linkedin: 'https://www.linkedin.com/in/ayushmaan-srivastava-70729337b',
-    instagram: 'https://www.instagram.com/ayyuuush._/',
-  },
-  {
     name: 'Aayush Joshi',
-    role: 'Founder & Lead Engineer',
-    bio: 'Building AI tools to fight misinformation at scale across India.',
+    role: 'Founder & Sole Engineer',
+    bio: 'Designed, built, and deployed every single part of Mitra AI — from frontend to AI integration, database architecture, and production infrastructure.',
     avatar: 'AJ',
     color: '#4F8EFF',
     github: 'https://github.com/Aayush1803',
@@ -27,9 +17,19 @@ const TEAM = [
     instagram: 'https://www.instagram.com/aayushjoshiiii_/',
   },
   {
+    name: 'Ayushmaan Srivastava',
+    role: 'Co-Founder & Moral Support',
+    bio: 'Kept the team motivated and spirits high throughout the build process.',
+    avatar: 'AS',
+    color: '#22D3EE',
+    github: 'https://github.com/Ayushmaan124-cpu',
+    linkedin: 'https://www.linkedin.com/in/ayushmaan-srivastava-70729337b',
+    instagram: 'https://www.instagram.com/ayyuuush._/',
+  },
+  {
     name: 'Aditya Rauniyar',
-    role: 'Co-founder & Web Designer',
-    bio: 'Crafting the visual identity and user experience of Mitra AI.',
+    role: 'Co-Founder & Presentation Designer',
+    bio: 'Crafted the pitch deck and visual presentation materials for Mitra AI.',
     avatar: 'AR',
     color: '#7C3AED',
     github: 'https://github.com/aditya22-ops',
