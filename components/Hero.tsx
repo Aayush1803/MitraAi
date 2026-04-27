@@ -107,12 +107,9 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
         transition={{ duration: 0.7, ease: 'easeOut' }}
         className="text-center mb-10 relative z-10"
       >
-        <div
-          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs mb-6"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--bg-border)', color: 'var(--text-muted)' }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#4F8EFF] animate-pulse" />
-          <span>Powered by Multimodal AI · India-first · 22+ Languages</span>
+        <div className="section-label mb-6">
+          <span className="live-dot" />
+          Powered by Multimodal AI · India-first · 22+ Languages
         </div>
 
         {/* Phase 2 — @frontend-design: Syne display font for typographic contrast */}
@@ -136,7 +133,7 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
         transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
         className="w-full max-w-3xl relative z-10"
       >
-        <div className="glass rounded-2xl overflow-hidden glow-blue" style={{ border: '1px solid var(--glass-border)' }}>
+        <div className="glass rounded-2xl overflow-hidden shimmer-border" style={{ border: '1px solid var(--glass-border)' }}>
           {/* Tab bar + auto-detect badge */}
           <div className="flex items-center justify-between px-4" style={{ borderBottom: '1px solid var(--bg-border)' }}>
             <div className="flex">
@@ -275,17 +272,14 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
               whileHover={isReadyToSubmit && !isLoading ? { scale: 1.02 } : {}}
               whileTap={isReadyToSubmit && !isLoading ? { scale: 0.98 } : {}}
               className={`mt-5 w-full py-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-3 transition-all duration-300${
-                isReadyToSubmit && !isLoading ? ' btn-glow-pulse' : ''
+                isReadyToSubmit && !isLoading ? ' btn-premium btn-glow-pulse' : ''
               }`}
-              style={isReadyToSubmit && !isLoading ? {
-                background: 'linear-gradient(135deg, #4F8EFF, #5B6EF7, #7C3AED)',
-                color: 'white',
-              } : {
+              style={!isReadyToSubmit || isLoading ? {
                 background: 'var(--bg-secondary)',
                 color: 'var(--text-muted)',
                 border: '1px solid var(--bg-border)',
                 cursor: 'not-allowed',
-              }}
+              } : {}}
             >
               <Scan className="w-4 h-4" />
               {isLoading ? 'Analyzing...' : 'Run Deep Analysis'}
@@ -324,12 +318,12 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
           ].map((stat, i) => (
             <div key={stat.label} className="text-center">
               <div
-                className="text-2xl font-black gradient-text counter-reveal"
+                className="stat-number text-2xl gradient-text counter-reveal"
                 style={{ animationDelay: `${0.5 + i * 0.12}s` }}
               >
                 {stat.value}
               </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{stat.label}</div>
+              <div className="text-xs mt-1 mono-font" style={{ color: 'var(--text-muted)' }}>{stat.label}</div>
             </div>
           ))}
         </div>
