@@ -12,7 +12,7 @@ import {
 
 const FEATURES = [
   { icon: '🔍', title: '9-Step AI Pipeline', desc: 'Claims extraction, verification & trust scoring' },
-  { icon: '🌐', title: '3 Languages', desc: 'English, Hindi, and Tamil support built-in' },
+  { icon: '🌐', title: '23 Languages', desc: 'All 23 official Indian languages supported' },
   { icon: '⚡', title: 'Real-time Analysis', desc: 'Results in under 5 seconds' },
   { icon: '🛡️', title: 'India-First Context', desc: 'Tuned for regional misinformation patterns' },
 ];
@@ -161,7 +161,7 @@ function LoginInner() {
 
         {/* Bottom stats */}
         <div className="relative z-10 flex gap-8">
-          {[['3', 'Languages supported'], ['9-Step', 'AI pipeline'], ['Free', 'Always free']].map(([v, l]) => (
+          {[['23', 'Languages'], ['9-Step', 'AI pipeline'], ['Free', 'Always free']].map(([v, l]) => (
             <div key={l}>
               <div className="text-2xl font-black gradient-text">{v}</div>
               <div className="text-xs text-[#4A4A60] mt-0.5">{l}</div>

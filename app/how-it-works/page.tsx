@@ -127,8 +127,8 @@ const FAQS = [
     a: 'We do not share your submitted content with third parties. Analysis history is stored only in your account for your reference.',
   },
   {
-    q: 'Why only English, Hindi, and Tamil?',
-    a: 'These three languages cover the largest share of Indian digital content and misinformation. We are actively working on adding Bengali, Telugu, Marathi, and Kannada.',
+    q: 'Which languages does Mitra support?',
+    a: 'Mitra supports all 23 official Indian languages listed in the 8th Schedule of the Constitution — including Hindi, English, Bengali, Telugu, Marathi, Tamil, Urdu, Gujarati, Kannada, Malayalam, Odia, Punjabi, Assamese, Maithili, Sanskrit, Kashmiri, Nepali, Sindhi, Konkani, Dogri, Manipuri, Bodo, and Santali. Code-mixed variants like Hinglish and Tanglish are also handled.',
   },
   {
     q: 'Can I use Mitra for journalism?',
