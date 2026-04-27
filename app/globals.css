@@ -341,6 +341,7 @@ button, a, input, textarea { transition-duration: 150ms; }
   mask-composite: exclude;
   padding: 1px;
   z-index: 0;
+  pointer-events: none; /* CRITICAL: never block clicks on card content */
 }
 
 @keyframes shimmer-move {
