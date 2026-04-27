@@ -109,7 +109,7 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
       >
         <div className="section-label mb-6">
           <span className="live-dot" />
-          Powered by Multimodal AI · India-first · 22+ Languages
+          Powered by Multimodal AI · India-first · All 23 Official Languages
         </div>
 
         {/* Phase 2 — @frontend-design: Syne display font for typographic contrast */}
@@ -292,7 +292,7 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
 
         {/* Trust badges */}
         <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs" style={{ color: 'var(--text-muted)' }}>
-          {['India-first focus', '22+ Indian Languages', 'Free to use', 'Hackathon project'].map((badge) => (
+          {['India-first focus', 'All 23 Official Languages', 'Free to use', 'Hackathon project'].map((badge) => (
             <div key={badge} className="flex items-center gap-1.5">
               <div className="w-1 h-1 rounded-full" style={{ background: 'var(--text-muted)' }} />
               <span>{badge}</span>
@@ -311,7 +311,7 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
         {/* Phase 3 — @design-spells: counter-reveal staggered animation on stat values */}
         <div className="flex flex-wrap justify-center gap-8 mt-16 relative z-10">
           {[
-            { value: '22+', label: 'Languages Supported' },
+            { value: '23', label: 'Indian Languages' },
             { value: '9-Step', label: 'AI Pipeline' },
             { value: 'Free', label: 'Always Free' },
             { value: '<5s', label: 'Avg. Response Time' },

@@ -91,7 +91,7 @@ const PERF = [
   { label: 'Avg. response time', value: '<5s', desc: 'Full 9-step pipeline end-to-end' },
   { label: 'Scoring method', value: 'Heuristic', desc: 'Keyword-based, not an ML model' },
   { label: 'Supported input types', value: '3', desc: 'Text · URL · Media' },
-  { label: 'Languages supported', value: '3', desc: 'English · Hindi · Tamil' },
+  { label: 'Languages supported', value: '23', desc: 'All 23 official Indian languages' },
 ];
 
 export default function TechnologyPage() {

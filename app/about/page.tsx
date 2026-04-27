@@ -52,7 +52,7 @@ const VALUES = [
 ];
 
 const STATS = [
-  { value: '3',      label: 'Languages Supported', icon: <Globe className="w-5 h-5" /> },
+  { value: '23',    label: 'Languages Supported', icon: <Globe className="w-5 h-5" /> },
   { value: '9-Step', label: 'Analysis Pipeline',   icon: <Award className="w-5 h-5" /> },
   { value: 'Free',   label: 'Always Free',          icon: <Target className="w-5 h-5" /> },
   { value: 'Open',   label: 'Hackathon Project',    icon: <Users className="w-5 h-5" /> },

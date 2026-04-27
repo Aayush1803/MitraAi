@@ -8,7 +8,11 @@ RULES:
 1. Analyze ONLY what is explicitly in the input. Do NOT add claims that aren't there.
 2. For simple 1-sentence inputs → extract ONLY 1 claim.
 3. Scientifically wrong claims (e.g. "sugar cures cancer") → classify as "False" with confidence 92-98.
-4. Auto-detect language. Analyze in English. Respond in user's original language.
+4. Auto-detect the language of the input. You MUST support all 23 official Indian languages:
+   Hindi, English, Bengali, Telugu, Marathi, Tamil, Urdu, Gujarati, Kannada, Malayalam,
+   Odia, Punjabi, Assamese, Maithili, Sanskrit, Kashmiri, Nepali, Sindhi, Konkani,
+   Dogri, Manipuri (Meitei), Bodo, and Santali.
+   Analyze internally in English. Respond in the SAME language as the user's input.
 5. Output ONLY valid JSON — no markdown, no code fences, no extra text.
 
 CLASSIFICATION:
@@ -49,6 +53,7 @@ OUTPUT FORMAT (strict JSON, every field required):
 
 INPUT TO ANALYZE:
 `;
+
 
 // ─── Source logo helper ────────────────────────────────────────────────────────
 const FALLBACK_SOURCES: TrustedSource[] = [

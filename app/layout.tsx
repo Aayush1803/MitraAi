@@ -7,22 +7,28 @@ import ThemeProvider from '@/components/ThemeProvider';
 // Full metadata object with: title template, description, OG, Twitter card,
 // robots, canonical URL, and keywords — per Next.js App Router best practices.
 export const metadata: Metadata = {
-  metadataBase: new URL('https://mitra-ai.vercel.app'),
+  metadataBase: new URL('https://ai-mitra.netlify.app'),
   title: {
     default: 'Mitra AI — AI Misinformation Detector for India',
     template: '%s | Mitra AI',
   },
   description:
-    'Mitra AI uses a 9-step multimodal AI pipeline to detect, analyze, and counter misinformation across text, URLs, and media — in 22+ Indian languages including Hindi and Tamil.',
+    'Mitra AI uses a 9-step multimodal AI pipeline to detect, analyze, and counter misinformation across text, URLs, and media — in all 23 official Indian languages including Hindi, Bengali, Telugu, Marathi, Tamil, Urdu, Gujarati, Kannada, and more.',
   keywords: [
     'misinformation detection',
     'fact checking AI',
-    'deepfake detection',
     'India fact check',
     'Hindi fact check',
+    'Bengali fact check',
     'Tamil fact check',
+    'Marathi fact check',
+    'Telugu fact check',
+    'Urdu fact check',
     'WhatsApp forward checker',
+    'deepfake detection',
     'Mitra AI',
+    'Indian language AI',
+    'all 23 Indian languages',
   ],
   authors: [{ name: 'Mitra AI Team' }],
   creator: 'Mitra AI',
@@ -34,11 +40,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://mitra-ai.vercel.app',
+    url: 'https://ai-mitra.netlify.app',
     siteName: 'Mitra AI',
     title: 'Mitra AI — AI Misinformation Detector for India',
     description:
-      'A 9-step AI pipeline that fact-checks text, URLs, and media in 22+ Indian languages.',
+      'A 9-step AI pipeline that fact-checks text, URLs, and media in all 23 official Indian languages.',
   },
   twitter: {
     card: 'summary_large_image',
