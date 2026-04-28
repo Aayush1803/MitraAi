@@ -1,23 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Gemini supports these natively via inline base64 multimodal
-const SUPPORTED_MIME_TYPES = new Set([
-  // Images
-  'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-  'image/bmp', 'image/tiff', 'image/heic', 'image/heif', 'image/avif',
-  // Audio
-  'audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/wav', 'audio/ogg',
-  'audio/flac', 'audio/aac', 'audio/webm', 'audio/x-m4a',
-  // Video
-  'video/mp4', 'video/mpeg', 'video/mov', 'video/quicktime',
-  'video/avi', 'video/x-msvideo', 'video/webm', 'video/3gp', 'video/3gpp',
-  'video/mkv', 'video/x-matroska',
-  // Documents
-  'application/pdf',
-  'text/plain',
-]);
+// App Router route segment config — extends Netlify function timeout
+export const maxDuration = 60; // seconds
 
-const MAX_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB inline limit for Gemini
+// ─── MIME type support map ────────────────────────────────────────────────────
+// Gemini's native multimodal API supports these formats
+const MIME_BY_EXT: Record<string, string> = {
+  // Images
+  jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+  gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp',
+  tiff: 'image/tiff', tif: 'image/tiff', heic: 'image/heic',
+  heif: 'image/heif', avif: 'image/avif',
+  // Audio
+  mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg',
+  flac: 'audio/flac', aac: 'audio/aac', m4a: 'audio/x-m4a',
+  opus: 'audio/ogg', wma: 'audio/x-ms-wma',
+  // Video
+  mp4: 'video/mp4', mpeg: 'video/mpeg', mpg: 'video/mpeg',
+  mov: 'video/mp4', avi: 'video/x-msvideo', webm: 'video/webm',
+  '3gp': 'video/3gpp', mkv: 'video/x-matroska',
+  flv: 'video/x-flv', wmv: 'video/x-ms-wmv',
+  // Documents
+  pdf: 'application/pdf', txt: 'text/plain',
+};
+
+const SUPPORTED_MIME_TYPES = new Set(Object.values(MIME_BY_EXT));
+
+const MAX_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB — Gemini inline data limit
 
 function getMediaCategory(mimeType: string): string {
   if (mimeType.startsWith('image/')) return 'image';
@@ -27,50 +36,72 @@ function getMediaCategory(mimeType: string): string {
   return 'file';
 }
 
+/** Resolve MIME type: prefer file.type, fallback to extension mapping */
+function resolveMimeType(file: File): string {
+  let mime = (file.type || '').toLowerCase();
+
+  // Fix common browser misdetections
+  if (mime === 'video/quicktime') mime = 'video/mp4';
+  if (mime === 'audio/mp4') mime = 'audio/x-m4a';
+
+  // If still generic/unknown, use extension
+  if (!mime || mime === 'application/octet-stream') {
+    const ext = (file.name.split('.').pop() ?? '').toLowerCase();
+    mime = MIME_BY_EXT[ext] ?? mime;
+  }
+
+  return mime;
+}
+
 const ANALYSIS_PROMPT = `You are a STRICT factual verification AI system for India specializing in multimodal content.
 
 ANALYZE this media content for:
-1. Factual claims made verbally or shown visually
-2. Signs of manipulation, deepfake, or synthetic generation
+1. Factual claims made verbally, visually, or in text overlays
+2. Signs of manipulation, deepfake, or synthetic generation  
 3. Misleading context, out-of-context usage, or visual deception
 4. Sensitive content related to Indian politics, religion, or social issues
 
 RULES:
-- Auto-detect the language of spoken/written content. Support all 23 official Indian languages.
-- Analyze all text visible in the media (overlays, subtitles, banners).
-- Check for visual inconsistencies that suggest manipulation.
-- Output ONLY valid JSON — no markdown, no code fences.
+- Auto-detect the language of spoken/written content in the media.
+- Support all 23 official Indian languages: Hindi, English, Bengali, Telugu, Marathi, Tamil, Urdu, Gujarati, Kannada, Malayalam, Odia, Punjabi, Assamese, Maithili, Sanskrit, Kashmiri, Nepali, Sindhi, Konkani, Dogri, Manipuri, Bodo, Santali.
+- Analyze ALL text visible in the media (overlays, subtitles, banners, watermarks).
+- For audio: transcribe key claims made.
+- For video: analyze both visual content and spoken claims.
+- For images: read all embedded text and analyze visual context.
+- For PDFs: extract and analyze the document's factual claims.
+- Check for signs of manipulation or misrepresentation.
+- Output ONLY valid JSON — no markdown, no code fences, no extra text.
 
-OUTPUT FORMAT (strict JSON):
+OUTPUT FORMAT (strict JSON, every field required):
 {
   "language_detected": "Hindi",
-  "media_type_analysis": "Brief description of what the media contains",
-  "manipulation_indicators": ["list", "of", "red flags if any"],
+  "media_type_analysis": "Brief description of what the media contains and what was analyzed",
+  "manipulation_indicators": ["list any red flags, or empty array if none"],
   "claims": [
-    { "text": "exact claim found in media", "classification": "False", "confidence": 96 }
+    { "text": "exact claim extracted from media", "classification": "False", "confidence": 96 }
   ],
   "trust_score": 8,
   "fact_verification": {
-    "correct_info": "what the truth actually is",
+    "correct_info": "what the truth actually is based on verified information",
     "sources": [
       { "name": "source name", "url": "https://source.url" }
     ]
   },
   "explanation": {
-    "detailed": "2-3 sentence expert explanation",
+    "detailed": "2-3 sentence expert explanation of the findings",
     "eli10": "Simple explanation for a 10-year-old"
   },
   "virality_risk": {
     "score": 82,
     "level": "High",
-    "reason": "why this would spread virally"
+    "reason": "one sentence explaining why this content would spread virally"
   },
   "context_analysis": {
-    "regional": "India-specific context",
-    "cultural": "Cultural framing context",
-    "sensitivity": "HIGH/MEDIUM/LOW — reason"
+    "regional": "India-specific regional context for this content",
+    "cultural": "Cultural framing or sensitivity context",
+    "sensitivity": "HIGH/MEDIUM/LOW — reason for sensitivity rating"
   },
-  "counter_message": "Factual, polite counter-message to share on WhatsApp"
+  "counter_message": "A factual, polite counter-message someone can share on WhatsApp to debunk this"
 }
 `;
 
@@ -83,36 +114,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Normalise MIME type
-    let mimeType = file.type || 'application/octet-stream';
-    // Fix common misdetections
-    if (mimeType === 'video/quicktime') mimeType = 'video/mp4';
+    const mimeType = resolveMimeType(file);
 
     if (!SUPPORTED_MIME_TYPES.has(mimeType)) {
       return NextResponse.json({
-        error: `Unsupported file type: ${mimeType}. Supported: images (JPEG, PNG, WebP, GIF, BMP, HEIC), audio (MP3, WAV, OGG, FLAC, AAC, M4A), video (MP4, AVI, MOV, WebM, MKV, 3GP), PDF, and plain text.`,
+        error: `Unsupported file type "${mimeType || file.name}". Supported formats: Images (JPEG, PNG, WebP, GIF, BMP, HEIC, AVIF), Audio (MP3, WAV, OGG, FLAC, AAC, M4A, OPUS), Video (MP4, MOV, AVI, WebM, MKV, 3GP, FLV, WMV), Documents (PDF, TXT).`,
       }, { status: 400 });
     }
 
     if (file.size > MAX_SIZE_BYTES) {
       return NextResponse.json({
-        error: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum is 20 MB for inline analysis.`,
+        error: `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum size is 20 MB. For larger videos, consider extracting a key clip.`,
       }, { status: 400 });
     }
 
     const apiKey = (process.env.GEMINI_API_KEY ?? '').trim();
     if (!apiKey) {
-      return NextResponse.json({ error: 'AI service not configured' }, { status: 503 });
+      return NextResponse.json({ error: 'AI service not configured. Set GEMINI_API_KEY.' }, { status: 503 });
     }
 
     const category = getMediaCategory(mimeType);
-    console.log(`[Media] Analyzing ${category}: ${file.name} (${(file.size / 1024).toFixed(0)} KB, ${mimeType})`);
+    console.log(`[Media] Analyzing ${category}: "${file.name}" (${(file.size / 1024).toFixed(0)} KB, ${mimeType})`);
 
-    // Convert file to base64
+    // Convert file to base64 for Gemini inline data
     const arrayBuffer = await file.arrayBuffer();
     const base64Data = Buffer.from(arrayBuffer).toString('base64');
 
-    // Build Gemini multimodal request
+    // Try models in order — prefer 2.5 flash for multimodal
     const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
     let geminiResponse: Response | null = null;
     let lastError = '';
@@ -121,6 +149,7 @@ export async function POST(req: NextRequest) {
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       try {
+        console.log(`[Media] Calling ${model}...`);
         const res = await fetch(geminiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -143,11 +172,12 @@ export async function POST(req: NextRequest) {
               maxOutputTokens: 2048,
             },
           }),
-          signal: AbortSignal.timeout(60_000), // 60s for large files
+          signal: AbortSignal.timeout(55_000),
         });
 
         if (res.status === 429) {
           lastError = `Rate limit on ${model}`;
+          console.warn(`[Media] Rate limit on ${model}, trying next...`);
           continue;
         }
 
@@ -165,8 +195,9 @@ export async function POST(req: NextRequest) {
 
     if (!geminiResponse.ok) {
       const errBody = await geminiResponse.text();
+      console.error('[Media] Gemini error:', geminiResponse.status, errBody.slice(0, 400));
       return NextResponse.json({
-        error: `Gemini error (${geminiResponse.status}): ${errBody.slice(0, 300)}`,
+        error: `AI error (${geminiResponse.status}): ${errBody.slice(0, 200)}`,
       }, { status: 502 });
     }
 
@@ -181,21 +212,25 @@ export async function POST(req: NextRequest) {
 
     const rawText = (geminiData.candidates?.[0]?.content?.parts?.[0]?.text ?? '').trim();
 
-    // Return extracted text + metadata so analyze route can process it
+    if (!rawText) {
+      return NextResponse.json({ error: 'AI returned empty response for media' }, { status: 502 });
+    }
+
+    console.log(`[Media] ✅ Got ${rawText.length} chars from Gemini`);
+
     return NextResponse.json({
       text: rawText,
       fileName: file.name,
       mimeType,
       category,
       fileSizeKB: Math.round(file.size / 1024),
-      isDirectAnalysis: true, // signal to caller that this is already Gemini JSON
+      isDirectAnalysis: true,
     });
 
   } catch (err) {
-    console.error('[Media] Error:', err);
+    console.error('[Media] Unexpected error:', err);
     return NextResponse.json({
       error: err instanceof Error ? err.message : 'Media analysis failed',
     }, { status: 500 });
   }
 }
-

@@ -4,3 +4,13 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Increase body size limit for media file uploads (default is 10MB — too small for video/audio)
+[functions]
+  included_files = ["node_modules/@prisma/client/**"]
+
+[[headers]]
+  for = "/api/analyze-media"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "POST, OPTIONS"
