@@ -235,9 +235,9 @@ export async function POST(req: NextRequest) {
           signal: controller.signal,
         });
 
-        if (res.status === 429) {
-          lastError = `Rate limit on ${model} (429)`;
-          console.warn(`[Mitra] Rate limit hit on ${model}, trying next model...`);
+        if (res.status === 429 || res.status === 503) {
+          lastError = `Error ${res.status} on ${model}`;
+          console.warn(`[Mitra] ${res.status} hit on ${model}, trying next model...`);
           continue; // try next model
         }
 
@@ -263,8 +263,11 @@ export async function POST(req: NextRequest) {
     if (!geminiResponse.ok) {
       const errBody = await geminiResponse.text();
       console.error('[Mitra] Gemini error:', geminiResponse.status, errBody.slice(0, 300));
+      if (geminiResponse.status === 503) {
+        return NextResponse.json({ error: "Google's AI service is currently overloaded. Please try again in a few moments." }, { status: 503 });
+      }
       return NextResponse.json(
-        { error: `Gemini API error (${geminiResponse.status}). ${errBody.slice(0, 200)}` },
+        { error: `Google AI error (${geminiResponse.status}). Please try again.` },
         { status: 502 },
       );
     }

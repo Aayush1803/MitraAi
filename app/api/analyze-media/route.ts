@@ -175,9 +175,9 @@ export async function POST(req: NextRequest) {
           signal: AbortSignal.timeout(55_000),
         });
 
-        if (res.status === 429) {
-          lastError = `Rate limit on ${model}`;
-          console.warn(`[Media] Rate limit on ${model}, trying next...`);
+        if (res.status === 429 || res.status === 503) {
+          lastError = `Error ${res.status} on ${model}`;
+          console.warn(`[Media] ${res.status} on ${model}, trying next...`);
           continue;
         }
 
@@ -196,8 +196,11 @@ export async function POST(req: NextRequest) {
     if (!geminiResponse.ok) {
       const errBody = await geminiResponse.text();
       console.error('[Media] Gemini error:', geminiResponse.status, errBody.slice(0, 400));
+      if (geminiResponse.status === 503) {
+        return NextResponse.json({ error: "Google's AI service is currently overloaded. Please try again in a few moments." }, { status: 503 });
+      }
       return NextResponse.json({
-        error: `AI error (${geminiResponse.status}): ${errBody.slice(0, 200)}`,
+        error: `Google AI error (${geminiResponse.status}). Please try again.`,
       }, { status: 502 });
     }
 
