@@ -230,6 +230,7 @@ export async function POST(req: NextRequest) {
               topK:            40,
               maxOutputTokens: 2048,
               candidateCount:  1,
+              responseMimeType: 'application/json',
             },
           }),
           signal: controller.signal,
