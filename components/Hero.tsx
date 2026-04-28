@@ -6,7 +6,7 @@ import { Type, Link2, Upload, X, FileText, FileAudio, FileVideo, Image as ImageI
 import { InputType } from '@/lib/types';
 
 interface HeroProps {
-  onSubmit: (input: string, type: InputType) => void;
+  onSubmit: (input: string, type: InputType, file?: File) => void;
   isLoading: boolean;
 }
 
@@ -56,13 +56,13 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
 
   const handleSubmit = () => {
     if (isLoading) return;
-    // Language is auto-detected by Gemini — always pass 'en' as placeholder
     if (activeTab === 'text' && textInput.trim()) {
       onSubmit(textInput.trim(), 'text');
     } else if (activeTab === 'url' && urlInput.trim()) {
       onSubmit(urlInput.trim(), 'url');
     } else if (activeTab === 'media' && uploadedFile) {
-      onSubmit(`[Media File: ${uploadedFile.name}] ${uploadedFile.type} — ${(uploadedFile.size / 1024).toFixed(1)}KB. Analyzing for deepfake signatures, audio spectrograms, and visual manipulation artifacts.`, 'media');
+      // Pass the actual File object so the hook can send it to /api/analyze-media
+      onSubmit(uploadedFile.name, 'media', uploadedFile);
     }
   };
 
@@ -214,7 +214,7 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
                     />
                   </div>
                   <p className="text-xs mt-3" style={{ color: 'var(--text-muted)' }}>
-                    Supports news articles, social media posts, YouTube videos, and blog links.
+                    Supports news articles, YouTube videos, Twitter/X posts, Instagram reels, blog posts, Wikipedia pages, and any public URL.
                   </p>
                   <button onClick={loadSample} className="text-xs text-[#4F8EFF] hover:text-[#6BA3FF] transition-colors mt-1">
                     Load sample URL
@@ -230,7 +230,12 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
                         {getFileIcon(uploadedFile)}
                         <div>
                           <p className="text-sm font-medium truncate max-w-xs" style={{ color: 'var(--text-primary)' }}>{uploadedFile.name}</p>
-                          <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{(uploadedFile.size / 1024).toFixed(1)} KB · {uploadedFile.type || 'unknown type'}</p>
+                          <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                            {uploadedFile.size > 1024 * 1024
+                              ? `${(uploadedFile.size / 1024 / 1024).toFixed(1)} MB`
+                              : `${(uploadedFile.size / 1024).toFixed(0)} KB`
+                            } · {uploadedFile.type || 'unknown type'}
+                          </p>
                         </div>
                       </div>
                       <button onClick={() => setUploadedFile(null)} className="text-[#4A4A60] hover:text-red-400 transition-colors">
@@ -255,10 +260,13 @@ export default function Hero({ onSubmit, isLoading }: HeroProps) {
                         {dragActive && <div className="scan-line" />}
                       </div>
                       <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Drop media file or <span className="text-[#4F8EFF]">browse</span></p>
-                      <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Video, Audio, Image · Max 50MB</p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Images · Audio · Video · PDF · Max 20MB</p>
+                      <p className="text-[10px] mt-1" style={{ color: 'var(--text-muted)' }}>JPEG, PNG, WebP, GIF, MP3, WAV, MP4, AVI, MOV, MKV, PDF...</p>
                     </div>
                   )}
-                  <input ref={fileRef} type="file" accept="video/*,audio/*,image/*" onChange={handleFileChange} className="hidden" />
+                  <input ref={fileRef} type="file"
+                    accept="image/*,audio/*,video/*,application/pdf,text/plain,.heic,.heif,.avif,.mkv,.avi,.mov,.flv,.wmv,.m4a,.flac,.ogg,.opus,.aac"
+                    onChange={handleFileChange} className="hidden" />
                 </motion.div>
               )}
             </AnimatePresence>

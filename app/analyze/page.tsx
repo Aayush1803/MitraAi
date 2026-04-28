@@ -50,7 +50,7 @@ export default function AnalyzePage() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
           >
-            <Hero onSubmit={handleSubmit} isLoading={false} />
+            <Hero onSubmit={(input, type, file) => handleSubmit(input, type, file)} isLoading={false} />
           </motion.div>
         )}
 
