@@ -9,8 +9,8 @@ import Footer from '@/components/Footer';
 const TEAM = [
   {
     name: 'Aayush Joshi',
-    role: 'Founder & Sole Engineer',
-    bio: 'Designed, built, and deployed every single part of Mitra AI — from frontend to AI integration, database architecture, and production infrastructure.',
+    role: 'Founder, Lead Architect & Full-Stack Engineer',
+    bio: 'The technical mastermind behind Mitra AI. Aayush architected, developed, and deployed the entire platform from the ground up. He single-handedly designed the Next.js serverless architecture, orchestrated the Neon Postgres database, integrated the Google Gemini 2.5 Flash multimodal engine, and crafted the premium glassmorphic UI/UX. His vision drives the technical execution and aggressive scaling strategy of Mitra.',
     avatar: 'AJ',
     color: '#4F8EFF',
     github: 'https://github.com/Aayush1803',
@@ -19,8 +19,8 @@ const TEAM = [
   },
   {
     name: 'Ayushmaan Srivastava',
-    role: 'Co-Founder & Moral Support',
-    bio: 'Kept the team motivated and spirits high throughout the build process.',
+    role: 'Co-Founder & Chief Operations Officer',
+    bio: 'The strategic pillar of the Mitra team. Ayushmaan directed the operational framework, provided critical moral support during intensive development sprints, and helped shape the core product philosophy. His deep understanding of the Indian digital landscape was crucial in defining Mitra\'s mission to tackle regional misinformation across 23 languages.',
     avatar: 'AS',
     color: '#22D3EE',
     github: 'https://github.com/Ayushmaan124-cpu',
@@ -29,8 +29,8 @@ const TEAM = [
   },
   {
     name: 'Aditya Rauniyar',
-    role: 'Co-Founder & Presentation Designer',
-    bio: 'Crafted the pitch deck and visual presentation materials for Mitra AI.',
+    role: 'Co-Founder & Lead Presenter',
+    bio: 'The voice and visual storyteller of Mitra AI. Aditya crafted the comprehensive pitch decks, visual presentation materials, and strategic marketing narratives. His ability to distill complex serverless architectures and multimodal AI concepts into compelling, easy-to-understand stories is instrumental in introducing Mitra to investors, hackathon judges, and the public.',
     avatar: 'AR',
     color: '#7C3AED',
     github: 'https://github.com/aditya22-ops',
