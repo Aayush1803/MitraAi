@@ -130,7 +130,10 @@ export function useAnalysis(): UseAnalysisReturn {
           const factData = (g.fact_verification as Record<string, unknown>) ?? {};
           const expData = (g.explanation as Record<string, unknown>) ?? {};
           const ctxData = (g.context_analysis as Record<string, unknown>) ?? {};
+          const tb = (g.trust_breakdown as Record<string, unknown>) ?? {};
           const viralLevel = (['Low', 'Medium', 'High'].includes(String(viralityData.level)) ? String(viralityData.level) : 'Medium') as 'Low' | 'Medium' | 'High';
+          const clamp = (v: unknown, fallback: number) =>
+            Math.round(Math.max(0, Math.min(100, Number(v ?? fallback))));
 
           const mediaAnalysis: AnalysisResult = {
             id: `mitra-${Date.now()}`,
@@ -145,6 +148,12 @@ export function useAnalysis(): UseAnalysisReturn {
               confidence: Math.max(0, Math.min(100, Number(c.confidence ?? 70))),
             })),
             trustScore,
+            trustBreakdown: {
+              sourceReliability: clamp(tb.source_reliability, trustScore < 50 ? trustScore * 0.9 : 50 + (trustScore - 50) * 1.1),
+              factualAccuracy:   clamp(tb.factual_accuracy,   trustScore * 0.95 + 3),
+              contextIntegrity:  clamp(tb.context_integrity,  trustScore * 0.85 + 8),
+              emotionalLanguage: clamp(tb.emotional_language, 100 - trustScore * 0.88 - 3),
+            },
             factVerification: {
               correctedFact: String(factData.correct_info ?? ''),
               sources: ((factData.sources as Array<Record<string, unknown>>) ?? []).slice(0, 4).map(s => ({
