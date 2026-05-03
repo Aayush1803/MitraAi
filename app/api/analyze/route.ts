@@ -23,33 +23,39 @@ CLASSIFICATION:
 
 OUTPUT FORMAT (strict JSON, every field required):
 {
-  "language_detected": "English",
+  "language_detected": "<detected language name>",
   "claims": [
-    { "text": "exact claim from input", "classification": "False", "confidence": 96 }
+    { "text": "<exact claim from input>", "classification": "<True|False|Misleading|Opinion>", "confidence": <0-100 integer> }
   ],
-  "trust_score": 8,
+  "trust_score": <integer 0-100: 0-34=misinformation, 35-64=misleading, 65-100=credible>,
   "fact_verification": {
-    "correct_info": "detailed correction explaining what the science actually says",
+    "correct_info": "<detailed correction or confirmation explaining what the evidence actually says>",
     "sources": [
-      { "name": "source name", "url": "https://source.url" }
+      { "name": "<source name>", "url": "<https://source.url>" }
     ]
   },
   "explanation": {
-    "detailed": "2-3 sentence expert explanation of why this is false/true/misleading",
-    "eli10": "Simple explanation for a 10-year-old child"
+    "detailed": "<2-3 sentence expert explanation of why this is false/true/misleading>",
+    "eli10": "<Simple explanation for a 10-year-old child>"
   },
   "virality_risk": {
-    "score": 82,
-    "level": "High",
-    "reason": "one sentence why this would spread virally"
+    "score": <integer 0-100>,
+    "level": "<Low|Medium|High>",
+    "reason": "<one sentence why this would or would not spread virally>"
   },
   "context_analysis": {
-    "regional": "India-specific regional context for this claim",
-    "cultural": "Cultural framing or sensitivity context",
-    "sensitivity": "HIGH/MEDIUM/LOW — reason for sensitivity rating"
+    "regional": "<India-specific regional context for this claim>",
+    "cultural": "<Cultural framing or sensitivity context>",
+    "sensitivity": "<HIGH|MEDIUM|LOW> — <reason for sensitivity rating>"
   },
-  "counter_message": "A factual, polite counter-message someone can share on WhatsApp to debunk this"
+  "counter_message": "<A factual, polite counter-message someone can share on WhatsApp>"
 }
+
+TRUST SCORE GUIDANCE:
+- Claim is definitively TRUE (e.g. basic math, established science): trust_score = 80-100
+- Claim is mostly true but lacks context: trust_score = 60-79
+- Claim is misleading or mixed: trust_score = 35-59
+- Claim is false or misinformation: trust_score = 0-34
 
 INPUT TO ANALYZE:
 `;
@@ -139,7 +145,7 @@ function mapResult(
   // Counter message
   const counterText  = String(g.counter_message ?? '');
   const statusTag    = trustScore < 35 ? 'FALSE' : trustScore < 65 ? 'MISLEADING' : 'TRUE';
-  const statusLine   = trustScore < 55
+  const statusLine   = trustScore < 65
     ? '❌ This message contains false or misleading information.'
     : '✅ This message has been independently verified as accurate.';
 
