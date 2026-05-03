@@ -4,8 +4,11 @@ import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Shield, TrendingUp, TrendingDown, Minus, AlertOctagon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { TrustBreakdown } from '@/lib/types';
+
 interface TrustScoreProps {
   score: number;
+  breakdown: TrustBreakdown;
 }
 
 function getConfig(score: number) {
@@ -55,7 +58,7 @@ function Counter({ target, delay = 0.3 }: { target: number; delay?: number }) {
   return <>{display}</>;
 }
 
-export default function TrustScore({ score }: TrustScoreProps) {
+export default function TrustScore({ score, breakdown }: TrustScoreProps) {
   const cfg         = getConfig(score);
   const radius      = 72;
   const strokeW     = 10;
@@ -63,31 +66,36 @@ export default function TrustScore({ score }: TrustScoreProps) {
   const circumference = 2 * Math.PI * radius;
   const offset      = circumference - (score / 100) * circumference;
 
-  // Sub-metrics derived from trust score with natural spread
+  // Sub-metrics straight from Gemini — no frontend formulas
   const metrics = [
     {
       label: 'Source Reliability',
-      // Scales sub-linearly: high scores get a boost, low scores penalised harder
-      value: Math.round(Math.min(99, Math.max(1, score < 50 ? score * 0.9 : 50 + (score - 50) * 1.1))),
+      value: breakdown.sourceReliability,
       color: cfg.stroke,
+      tooltip: 'Credibility of sources behind this claim',
     },
     {
       label: 'Factual Accuracy',
-      // Closely tracks trust score with slight variance
-      value: Math.round(Math.min(99, Math.max(1, score * 0.95 + 3))),
+      value: breakdown.factualAccuracy,
       color: cfg.stroke,
+      tooltip: 'How factually correct the specific claim is',
     },
     {
       label: 'Context Integrity',
-      // Slightly more forgiving — partially-true content can still have context
-      value: Math.round(Math.min(99, Math.max(1, score * 0.85 + 8))),
+      value: breakdown.contextIntegrity,
       color: cfg.stroke,
+      tooltip: 'Whether context is presented accurately without omission',
     },
     {
       label: 'Emotional Language',
-      // Inverse: misinformation uses high emotional language; credible content uses low
-      value: Math.round(Math.min(99, Math.max(1, 100 - score * 0.88 - 3))),
-      color: score < 40 ? '#EF4444' : score < 70 ? '#F59E0B' : '#22C55E',
+      value: breakdown.emotionalLanguage,
+      // High emotional language on misinformation = red; on credible = amber warning
+      color: breakdown.emotionalLanguage > 60
+        ? '#EF4444'
+        : breakdown.emotionalLanguage > 35
+          ? '#F59E0B'
+          : '#22C55E',
+      tooltip: 'How emotionally charged / manipulative the language is (high = more manipulative)',
     },
   ];
 

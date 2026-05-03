@@ -172,7 +172,7 @@ export default function ResultsDashboard({ result, onReset }: ResultsDashboardPr
         </SectionCard>
 
         <SectionCard id="section-trust" label={SECTION_LABELS.trust} delay={0.15}>
-          <TrustScore score={result.trustScore} />
+          <TrustScore score={result.trustScore} breakdown={result.trustBreakdown} />
         </SectionCard>
 
         <SectionCard id="section-fact" label={SECTION_LABELS.fact} delay={0.2}>

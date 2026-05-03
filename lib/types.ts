@@ -45,6 +45,13 @@ export interface CounterMessage {
   whatsappText: string;
 }
 
+export interface TrustBreakdown {
+  sourceReliability: number;   // 0–100
+  factualAccuracy: number;     // 0–100
+  contextIntegrity: number;    // 0–100
+  emotionalLanguage: number;   // 0–100 (high = emotionally charged / manipulative)
+}
+
 export interface AnalysisResult {
   id: string;
   timestamp: string;
@@ -55,6 +62,7 @@ export interface AnalysisResult {
   // 9-step pipeline
   claims: Claim[];
   trustScore: number;
+  trustBreakdown: TrustBreakdown;
   factVerification: FactVerification;
   explanation: Explanation;
   viralityRisk: ViralityRisk;

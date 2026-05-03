@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AnalyzeRequest, AnalysisResult, Claim, TrustedSource } from '@/lib/types';
+import { AnalyzeRequest, AnalysisResult, Claim, TrustedSource, TrustBreakdown } from '@/lib/types';
 
 // ─── Gemini prompt ─────────────────────────────────────────────────────────────
 const PROMPT = `You are a STRICT factual verification AI system for India.
@@ -28,6 +28,12 @@ OUTPUT FORMAT (strict JSON, every field required):
     { "text": "<exact claim from input>", "classification": "<True|False|Misleading|Opinion>", "confidence": <0-100 integer> }
   ],
   "trust_score": <integer 0-100: 0-34=misinformation, 35-64=misleading, 65-100=credible>,
+  "trust_breakdown": {
+    "source_reliability": <integer 0-100: how credible and verifiable are the implied or cited sources?>,
+    "factual_accuracy": <integer 0-100: how factually correct is the specific claim based on evidence?>,
+    "context_integrity": <integer 0-100: does the claim present context accurately without omission or distortion?>,
+    "emotional_language": <integer 0-100: how emotionally charged or manipulative is the language? HIGH = manipulative, LOW = neutral>
+  },
   "fact_verification": {
     "correct_info": "<detailed correction or confirmation explaining what the evidence actually says>",
     "sources": [
@@ -39,7 +45,7 @@ OUTPUT FORMAT (strict JSON, every field required):
     "eli10": "<Simple explanation for a 10-year-old child>"
   },
   "virality_risk": {
-    "score": <integer 0-100>,
+    "score": <integer 0-100: how likely is this to spread virally? Consider emotional appeal and shareability>,
     "level": "<Low|Medium|High>",
     "reason": "<one sentence why this would or would not spread virally>"
   },
@@ -56,6 +62,12 @@ TRUST SCORE GUIDANCE:
 - Claim is mostly true but lacks context: trust_score = 60-79
 - Claim is misleading or mixed: trust_score = 35-59
 - Claim is false or misinformation: trust_score = 0-34
+
+TRUST BREAKDOWN GUIDANCE:
+- source_reliability: 0 = no credible sources exist; 100 = backed by peer-reviewed/official sources
+- factual_accuracy: 0 = completely false; 100 = precisely correct
+- context_integrity: 0 = severely misleading by omission; 100 = full context provided
+- emotional_language: 0 = calm/neutral; 100 = fear-mongering/panic-inducing
 
 INPUT TO ANALYZE:
 `;
@@ -116,6 +128,17 @@ function mapResult(
   // Trust score
   const trustScore = Math.max(0, Math.min(100, Number(g.trust_score ?? 50)));
 
+  // Trust breakdown — use Gemini's values with safe fallback derived from trustScore
+  const tb = (g.trust_breakdown as Record<string, unknown>) ?? {};
+  const clamp = (v: unknown, fallback: number) =>
+    Math.round(Math.max(0, Math.min(100, Number(v ?? fallback))));
+  const trustBreakdown: TrustBreakdown = {
+    sourceReliability: clamp(tb.source_reliability, trustScore < 50 ? trustScore * 0.9 : 50 + (trustScore - 50) * 1.1),
+    factualAccuracy:   clamp(tb.factual_accuracy,   trustScore * 0.95 + 3),
+    contextIntegrity:  clamp(tb.context_integrity,  trustScore * 0.85 + 8),
+    emotionalLanguage: clamp(tb.emotional_language, 100 - trustScore * 0.88 - 3),
+  };
+
   // Fact verification
   const fv = (g.fact_verification as Record<string, unknown>) ?? {};
   const rawSrc = (fv.sources as Array<Record<string, unknown>>) ?? [];
@@ -157,6 +180,7 @@ function mapResult(
     originalInput,
     claims,
     trustScore,
+    trustBreakdown,
     factVerification: {
       correctedFact: String(fv.correct_info ?? fv.correctedFact ?? ''),
       sources,
