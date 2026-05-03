@@ -175,6 +175,12 @@ export function generateAnalysis(req: AnalyzeRequest): AnalysisResult {
 
     claims,
     trustScore,
+    trustBreakdown: {
+      sourceReliability: Math.round(Math.min(99, Math.max(1, trustScore < 50 ? trustScore * 0.9 : 50 + (trustScore - 50) * 1.1))),
+      factualAccuracy:   Math.round(Math.min(99, Math.max(1, trustScore * 0.95 + 3))),
+      contextIntegrity:  Math.round(Math.min(99, Math.max(1, trustScore * 0.85 + 8))),
+      emotionalLanguage: Math.round(Math.min(99, Math.max(1, 100 - trustScore * 0.88 - 3))),
+    },
     factVerification: {
       correctedFact: FACTUAL_RESPONSES[factIdx].correctedFact,
       sources: pickSources(trustScore),
