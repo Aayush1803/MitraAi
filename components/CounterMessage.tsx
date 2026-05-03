@@ -71,13 +71,19 @@ export default function CounterMessage({ data }: CounterMessageProps) {
         </div>
 
         {/* WhatsApp version */}
-        <div className="relative p-4 bg-gradient-to-br from-green-900/10 to-green-800/5 border border-green-500/20 rounded-xl">
+        <div
+          className="relative p-4 rounded-xl border border-green-500/20"
+          style={{ background: 'color-mix(in srgb, #16a34a 8%, var(--bg-secondary))' }}
+        >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
                 <span className="text-white text-[10px] font-bold">W</span>
               </div>
-              <p className="text-xs font-semibold text-green-400 uppercase tracking-wide">WhatsApp Format</p>
+              <p className="text-xs font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide"
+                 style={{ color: 'color-mix(in srgb, #16a34a 80%, var(--text-primary))' }}>
+                WhatsApp Format
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <motion.button
@@ -85,9 +91,10 @@ export default function CounterMessage({ data }: CounterMessageProps) {
                 whileTap={{ scale: 0.95 }}
                 className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-all duration-200 ${
                   copied === 'wa'
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20'
+                    ? 'bg-green-500/20 text-green-600 border border-green-500/30'
+                    : 'bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500/20'
                 }`}
+                style={{ color: 'color-mix(in srgb, #16a34a 90%, var(--text-primary))' }}
               >
                 {copied === 'wa' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                 {copied === 'wa' ? 'Copied!' : 'Copy'}
@@ -96,13 +103,21 @@ export default function CounterMessage({ data }: CounterMessageProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition-colors"
+                className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-green-500/20 border border-green-500/30 hover:bg-green-500/30 transition-colors"
+                style={{ color: 'color-mix(in srgb, #16a34a 90%, var(--text-primary))' }}
               >
                 <Share2 className="w-3 h-3" /> Share
               </a>
             </div>
           </div>
-          <pre className="text-xs text-green-200/80 leading-relaxed whitespace-pre-wrap font-mono bg-green-900/10 rounded-lg p-3">
+          <pre
+            className="text-xs leading-relaxed whitespace-pre-wrap font-mono rounded-lg p-3"
+            style={{
+              background: 'color-mix(in srgb, #16a34a 6%, var(--bg-card))',
+              color: 'color-mix(in srgb, #15803d 85%, var(--text-primary))',
+              border: '1px solid color-mix(in srgb, #16a34a 20%, transparent)',
+            }}
+          >
             {data.whatsappText}
           </pre>
         </div>

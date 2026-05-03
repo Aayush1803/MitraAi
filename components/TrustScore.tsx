@@ -63,12 +63,32 @@ export default function TrustScore({ score }: TrustScoreProps) {
   const circumference = 2 * Math.PI * radius;
   const offset      = circumference - (score / 100) * circumference;
 
-  // Sub-metrics derived from trust score
+  // Sub-metrics derived from trust score with natural spread
   const metrics = [
-    { label: 'Source Reliability',  value: Math.min(99, score + 5),             color: cfg.stroke },
-    { label: 'Factual Accuracy',    value: Math.min(99, score - 3),             color: cfg.stroke },
-    { label: 'Context Integrity',   value: Math.min(99, Math.max(5, score - 8)), color: cfg.stroke },
-    { label: 'Emotional Language',  value: Math.min(99, Math.max(5, 95 - score)), color: score < 40 ? '#EF4444' : '#22C55E' },
+    {
+      label: 'Source Reliability',
+      // Scales sub-linearly: high scores get a boost, low scores penalised harder
+      value: Math.round(Math.min(99, Math.max(1, score < 50 ? score * 0.9 : 50 + (score - 50) * 1.1))),
+      color: cfg.stroke,
+    },
+    {
+      label: 'Factual Accuracy',
+      // Closely tracks trust score with slight variance
+      value: Math.round(Math.min(99, Math.max(1, score * 0.95 + 3))),
+      color: cfg.stroke,
+    },
+    {
+      label: 'Context Integrity',
+      // Slightly more forgiving — partially-true content can still have context
+      value: Math.round(Math.min(99, Math.max(1, score * 0.85 + 8))),
+      color: cfg.stroke,
+    },
+    {
+      label: 'Emotional Language',
+      // Inverse: misinformation uses high emotional language; credible content uses low
+      value: Math.round(Math.min(99, Math.max(1, 100 - score * 0.88 - 3))),
+      color: score < 40 ? '#EF4444' : score < 70 ? '#F59E0B' : '#22C55E',
+    },
   ];
 
   return (

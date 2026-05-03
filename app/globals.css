@@ -297,13 +297,32 @@ body {
 }
 
 /* ─── THEME TRANSITION ───────────────────────────────────────────────────── */
-*, *::before, *::after {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-duration: 200ms;
+/* Scope to layout/paint elements only — avoid fighting framer-motion SVG/div animations */
+html {
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+body,
+header, nav, footer, main, section, article, aside,
+div:not([class*="motion"]),
+p, h1, h2, h3, h4, h5, h6, span, li, label,
+input, textarea, select {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 300ms;
   transition-timing-function: ease;
 }
-/* Exclude transitions that would look bad */
-button, a, input, textarea { transition-duration: 150ms; }
+
+/* Override: interactive elements should be fast */
+button, a {
+  transition-property: background-color, border-color, color, opacity, transform, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+/* Never put theme transitions on SVG path/circle — breaks framer-motion arc animations */
+svg circle, svg path, svg line, svg rect, svg polyline {
+  transition: none;
+}
 
 /* ─── NOISE OVERLAY ─────────────────────────────────────────── */
 .noise::after {
